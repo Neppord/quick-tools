@@ -7,8 +7,8 @@ import Language.Java.Pretty
 
 main = do
   [filename] <- getArgs
-  ast <- parser compilationUnit <$> readFile filename
+  text <- readFile filename
+  let ast = parser compilationUnit text
   putStr $ case ast of
-    Right tree -> prettyPrint tree
-    Left _ -> ""
-  putStr "\n"
+    Right tree -> (prettyPrint tree) <> "\n"
+    Left _ -> text
