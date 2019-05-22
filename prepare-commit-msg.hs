@@ -11,8 +11,3 @@ main = do
 go [commit_msg_file] = print commit_msg_file
 go _ = return ()
 
-main' = do
-  [first, second] <- getArgs
-  firstAst <- parser compilationUnit <$> readFile first
-  secondAst <- parser compilationUnit <$> readFile second
-  print $ firstAst == secondAst
