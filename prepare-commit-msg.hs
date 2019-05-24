@@ -13,10 +13,15 @@ main = do
 
 go [commit_msg_file] = do
     out <- readProcess "git" ["diff", "-w", "--numstat", "HEAD"] ""
-    print $ parseNumstat out
-    print commit_msg_file
+    let (added, removed) = parseNumstat out
+    writeFile commit_msg_file $ createMessage added removed 
 go _ = return ()
 
+createMessage added removed
+  | added == removed = "r rename"
+  | added == 0 = "r remove"
+  | added > removed = "r extract"
+  | otherwise = "r inline"
 
 added :: String -> Integer
 added line = read $ words line !! 0
