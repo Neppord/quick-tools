@@ -11,6 +11,13 @@ main = do
     args <- getArgs
     go args
 
+go [commit_msg_file] = do
+    out <- readProcess "git" ["diff", "-w", "--numstat", "HEAD"] ""
+    print $ parseNumstat out
+    print commit_msg_file
+go _ = return ()
+
+
 added :: String -> Integer
 added line = read $ words line !! 0
 
@@ -18,17 +25,10 @@ removed :: String -> Integer
 removed line = read $ words line !! 1
 
 parseNumstat :: String -> (Integer, Integer)
-parseNumstat out = (getSum $ fst sumOfChanges, getSum $ snd sumOfChanges)
+parseNumstat out = case (sumOfChanges) of
+    (Sum added, Sum removed) -> (added, removed)
     where
         lines' = lines out
         parseLine line = (Sum $ added line, Sum $ removed line)
         listOfChanges = map parseLine  lines'
         sumOfChanges = foldr (<>) (Sum 0, Sum 0) listOfChanges
-
-go [commit_msg_file] = do
-    out <- readProcess "git" ["diff", "-w", "--numstat", "HEAD"] ""
-    print $ parseNumstat out
-    print commit_msg_file
-
-go _ = return ()
-
