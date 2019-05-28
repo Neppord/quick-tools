@@ -11,7 +11,7 @@ main = do
     args <- getArgs
     go args
 git = readProcess "git"
-numstat = git ["diff", "-w", "--numstat", "HEAD"] ""
+numstat = git ["diff", "-w", "-z", "--numstat", "HEAD"] ""
 
 getOldFile filepath = git ["cat-file", "-p", "HEAD:" <> filepath] ""
 getNewFile = readFile
