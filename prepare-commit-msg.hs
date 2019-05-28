@@ -10,9 +10,14 @@ import Language.Java.Parser
 main = do
     args <- getArgs
     go args
+git = readProcess "git"
+numstat = git ["diff", "-w", "--numstat", "HEAD"] ""
+
+getOldFile filepath = git ["cat-file", "-p", "HEAD:" <> filepath] ""
+getNewFile = readFile
 
 go [commit_msg_file] = do
-    out <- readProcess "git" ["diff", "-w", "--numstat", "HEAD"] ""
+    out <- numstat
     let (added, removed) = parseNumstat out
     writeFile commit_msg_file $ createMessage added removed 
 go _ = return ()
